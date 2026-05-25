@@ -18,7 +18,7 @@ export async function GET(request: Request) {
   if (!user) {
     const body: ApiResponse<never> = {
       ok: false,
-      error: { code: "UNAUTHORIZED", message: "登录态失效" },
+      error: { code: "AUTH_SESSION_INVALID", message: "Session invalid." },
     }
     return NextResponse.json(body, { status: 401 })
   }

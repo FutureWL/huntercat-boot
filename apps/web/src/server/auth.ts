@@ -10,7 +10,7 @@ export async function getUserIdOrUnauthorized(request: Request) {
 
   const body: ApiResponse<never> = {
     ok: false,
-    error: { code: "UNAUTHORIZED", message: "请先登录" },
+    error: { code: "AUTH_REQUIRED", message: "Authentication required." },
   }
 
   return { response: NextResponse.json(body, { status: 401 }) }

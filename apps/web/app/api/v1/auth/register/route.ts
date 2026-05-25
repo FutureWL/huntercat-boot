@@ -11,7 +11,7 @@ function ok<T>(data: T, init?: ResponseInit) {
   return NextResponse.json(body, init)
 }
 
-function fail(status: number, code: "BAD_REQUEST" | "CONFLICT", message: string) {
+function fail(status: number, code: "BAD_REQUEST_INVALID_JSON" | "BAD_REQUEST_VALIDATION" | "USER_USERNAME_TAKEN" | "INTERNAL_ERROR", message: string) {
   const body: ApiResponse<never> = { ok: false, error: { code, message } }
   return NextResponse.json(body, { status })
 }
@@ -22,19 +22,19 @@ export async function POST(request: Request) {
   try {
     payload = (await request.json()) as RegisterRequest
   } catch {
-    return fail(400, "BAD_REQUEST", "请求体不是合法 JSON")
+    return fail(400, "BAD_REQUEST_INVALID_JSON", "Request body is not valid JSON.")
   }
 
   if (!payload || typeof payload.username !== "string" || typeof payload.password !== "string") {
-    return fail(400, "BAD_REQUEST", "username/password 必须是字符串")
+    return fail(400, "BAD_REQUEST_VALIDATION", "Invalid username/password.")
   }
 
   const username = payload.username.trim()
   const password = payload.password
 
-  if (!username) return fail(400, "BAD_REQUEST", "username 不能为空")
-  if (username.length > 64) return fail(400, "BAD_REQUEST", "username 过长")
-  if (password.length < 6) return fail(400, "BAD_REQUEST", "password 至少 6 位")
+  if (!username) return fail(400, "BAD_REQUEST_VALIDATION", "Invalid username/password.")
+  if (username.length > 64) return fail(400, "BAD_REQUEST_VALIDATION", "Invalid username/password.")
+  if (password.length < 6) return fail(400, "BAD_REQUEST_VALIDATION", "Invalid username/password.")
 
   const passwordHash = await bcrypt.hash(password, 10)
 
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     return res
   } catch (e) {
     const code = (e as { code?: string } | undefined)?.code
-    if (code === "ER_DUP_ENTRY") return fail(409, "CONFLICT", "用户名已存在")
-    return fail(400, "BAD_REQUEST", "注册失败")
+    if (code === "ER_DUP_ENTRY") return fail(409, "USER_USERNAME_TAKEN", "Username already exists.")
+    return fail(500, "INTERNAL_ERROR", "Internal error.")
   }
 }

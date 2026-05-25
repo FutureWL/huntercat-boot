@@ -5,6 +5,9 @@
     "dev": "pnpm --filter @pjd/web dev",
     "build": "pnpm --filter @pjd/web build",
     "start": "pnpm --filter @pjd/web start",
+    "dev:api": "pnpm --filter @pjd/api dev",
+    "build:api": "pnpm --filter @pjd/api build",
+    "start:api": "pnpm --filter @pjd/api start",
     "typecheck": "pnpm -r typecheck"
   },
   "devDependencies": {

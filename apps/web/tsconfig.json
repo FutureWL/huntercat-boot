@@ -19,6 +19,9 @@
   "include": [
     "next-env.d.ts",
     "app",
+    "components",
+    "src",
+    "i18n",
     ".next/types/**/*.ts"
   ],
   "exclude": [

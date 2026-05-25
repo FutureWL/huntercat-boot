@@ -11,10 +11,10 @@ function ok<T>(data: T, init?: ResponseInit) {
   return NextResponse.json(body, init) // 返回 JSON（可附带 status 等）
 }
 
-function badRequest(message: string) {
+function badRequest(code: "BAD_REQUEST_INVALID_JSON" | "BAD_REQUEST_VALIDATION", message: string) {
   const body: ApiResponse<never> = { // 统一失败响应体
     ok: false, // 标记失败
-    error: { code: "BAD_REQUEST", message }, // 填充错误码与错误信息
+    error: { code, message }, // 填充错误码与错误信息
   } // body
   return NextResponse.json(body, { status: 400 }) // 返回 400
 }
@@ -37,16 +37,16 @@ export async function POST(request: Request) {
   try {
     payload = (await request.json()) as CreateTodoRequest // 解析 JSON 请求体
   } catch {
-    return badRequest("请求体不是合法 JSON") // JSON 解析失败
+    return badRequest("BAD_REQUEST_INVALID_JSON", "Request body is not valid JSON.") // JSON 解析失败
   }
 
   if (!payload || typeof payload.title !== "string") {
-    return badRequest("title 必须是字符串") // 字段校验失败
+    return badRequest("BAD_REQUEST_VALIDATION", "Invalid title.") // 字段校验失败
   }
 
   const title = payload.title.trim() // 去掉首尾空格
   if (!title) {
-    return badRequest("title 不能为空") // 空字符串不允许
+    return badRequest("BAD_REQUEST_VALIDATION", "Invalid title.") // 空字符串不允许
   }
 
   const created: Todo = await createTodo(userId!, title) // 创建 Todo（写入 user_id）

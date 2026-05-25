@@ -1,0 +1,228 @@
+{
+  "nav": {
+    "todos": "Todos",
+    "features": "Features",
+    "solutions": "Solutions",
+    "cases": "Customers",
+    "about": "About",
+    "login": "Login",
+    "register": "Register",
+    "freeTrial": "Free trial",
+    "bookDemo": "Book demo",
+    "contactSales": "Contact sales"
+  },
+  "language": {
+    "label": "Language",
+    "zh-CN": "中文",
+    "en-US": "English"
+  },
+  "theme": {
+    "system": "System ({mode})",
+    "dark": "Dark",
+    "light": "Light",
+    "unknown": "Theme",
+    "action": {
+      "light": "Switch to light mode",
+      "system": "Use system theme",
+      "dark": "Switch to dark mode"
+    },
+    "mode": {
+      "dark": "dark",
+      "light": "light"
+    }
+  },
+  "home": {
+    "shared": "This string comes from packages/shared and is reused directly in apps/web."
+  },
+  "landing": {
+    "hero": {
+      "title": "Huntercat rapid development system for digital products",
+      "subtitle": "huntercat-boot helps teams ship faster with an out-of-the-box engineering foundation and a rich set of reusable capabilities, so you can focus on business value.",
+      "points": [
+        {
+          "title": "Out of the box:",
+          "desc": "Standard foundation to start projects fast"
+        },
+        {
+          "title": "Feature-rich:",
+          "desc": "Common modules and components ready to use"
+        },
+        {
+          "title": "Team-ready:",
+          "desc": "Unified conventions and extensibility for collaboration"
+        }
+      ],
+      "actions": {
+        "trial": "Free trial",
+        "demo": "Book demo",
+        "sales": "Contact sales"
+      }
+    },
+    "pain": {
+      "title": "What slows teams down",
+      "subtitle": "From zero to one, teams often get stuck rebuilding the same foundations and dealing with inconsistent collaboration.",
+      "items": [
+        "High setup cost: auth, permissions, logs, config, i18n repeatedly rebuilt",
+        "Slow delivery: scattered modules and inconsistent conventions increase overhead",
+        "Risky iterations: missing unified foundations makes maintenance harder over time"
+      ]
+    },
+    "gain": {
+      "title": "How huntercat-boot helps",
+      "subtitle": "We turn foundations into reusable building blocks so rapid development becomes repeatable.",
+      "items": [
+        "Prebuilt foundations to reduce duplicated work and focus on business value",
+        "Modular structure with unified conventions, easy to extend and maintain",
+        "Supports the full journey from prototype to production with continuous iterations"
+      ]
+    },
+    "features": {
+      "title": "Out-of-the-box capabilities",
+      "subtitle": "Common capabilities for fast-moving teams, available by default and extensible when needed.",
+      "items": {
+        "rbac": {
+          "title": "Roles & Permissions",
+          "desc": "Built-in user/role/permission model with role-based feature and data access control."
+        },
+        "menu": {
+          "title": "Menu & Routing",
+          "desc": "Menu and routing configuration aligned for navigation and access control across modules."
+        },
+        "audit": {
+          "title": "Audit Logs",
+          "desc": "Key operations are traceable for troubleshooting, compliance and accountability."
+        },
+        "config": {
+          "title": "Config Center",
+          "desc": "Centralized runtime configuration and business parameters to reduce environment drift."
+        },
+        "i18n": {
+          "title": "Internationalization",
+          "desc": "Built-in i18n solution for fast language switching and scalable expansion."
+        },
+        "theme": {
+          "title": "Themes",
+          "desc": "Light/Dark/System themes to match enterprise style and user preferences."
+        },
+        "upload": {
+          "title": "File Upload",
+          "desc": "Unified upload and storage strategy for attachments, contracts and documents."
+        },
+        "notify": {
+          "title": "Notifications",
+          "desc": "In-app notification system to keep key events visible and reduce missed handoffs."
+        }
+      }
+    },
+    "solutions": {
+      "title": "Where it fits",
+      "subtitle": "From internal systems to industry products, ship fast and iterate safely.",
+      "items": [
+        {
+          "title": "Internal management systems",
+          "desc": "Build admin panels, workflows and permission management quickly."
+        },
+        {
+          "title": "Industry business systems",
+          "desc": "Deliver small-to-mid business systems from zero to launch more efficiently."
+        },
+        {
+          "title": "Multi-project delivery",
+          "desc": "Use one foundation across projects to reduce long-term maintenance cost."
+        },
+        {
+          "title": "Delivery & agency teams",
+          "desc": "Prototype faster, deliver more reliably, reuse more."
+        }
+      ]
+    },
+    "cases": {
+      "title": "Customer stories",
+      "subtitle": "Selected customers that have delivered with huntercat-boot.",
+      "items": [
+        {
+          "name": "Jiangxi Ajibi Technology Co., Ltd.",
+          "desc": "Built internal management and collaboration systems quickly with role-based access and modular navigation."
+        },
+        {
+          "name": "Shenzhen Huiyun Zhipao Technology Co., Ltd.",
+          "desc": "Delivered faster across multiple lines of business; centralized config and audit logs improved traceability."
+        },
+        {
+          "name": "Jiangxi Shouzan Technology Co., Ltd.",
+          "desc": "Launched enterprise admin systems with ready-to-use i18n and themes for customer-facing adaptations."
+        },
+        {
+          "name": "Jiangxi LinkeanShi Law Firm",
+          "desc": "Supported document-heavy processes; file upload and notifications helped reduce manual follow-ups."
+        },
+        {
+          "name": "Zhongyi Technology Co., Ltd.",
+          "desc": "Reused a unified foundation across parallel projects with permissions, audit and notifications for stable delivery."
+        }
+      ]
+    },
+    "about": {
+      "title": "About us",
+      "subtitle": "Nanchang Huntercat Digital Technology Co., Ltd.｜Digital Technology",
+      "companyName": "Nanchang Huntercat Digital Technology Co., Ltd.",
+      "companyDesc": "We focus on digital technology and provide a developer-friendly foundation to help teams build and deliver faster.",
+      "points": [
+        "Principle: engineering-first, modular, and maintainable by design.",
+        "Mission: help teams invest time in innovation and customer value.",
+        "Support: trial, demo and enterprise solution discussions as needed."
+      ]
+    },
+    "cta": {
+      "title": "Ship faster. Iterate safer.",
+      "subtitle": "Choose the best way to start with huntercat-boot.",
+      "actions": {
+        "trial": "Free trial",
+        "demo": "Book demo",
+        "sales": "Contact sales"
+      }
+    }
+  },
+  "auth": {
+    "loginTitle": "Login",
+    "registerTitle": "Register",
+    "username": "Username",
+    "password": "Password",
+    "passwordHint": "Password (min 6 chars)",
+    "loginButton": "Login",
+    "registerButton": "Register & Login",
+    "noAccount": "No account?",
+    "hasAccount": "Already have an account?",
+    "goRegister": "Go register",
+    "goLogin": "Go login",
+    "demoAccount": "Demo account: <user></user> / <pass></pass>"
+  },
+  "common": {
+    "errorPrefix": "Error: "
+  },
+  "todos": {
+    "title": "Todos",
+    "desc": "Data is from <path></path> (MySQL persisted) and isolated per user.",
+    "logout": "Logout",
+    "currentUser": "User: {name}",
+    "currentUserLoading": "User: …",
+    "remaining": "Remaining: {count}",
+    "titlePlaceholder": "Enter a todo title",
+    "add": "Add",
+    "refresh": "Refresh",
+    "loading": "Loading…",
+    "empty": "No todos yet. Create one to start.",
+    "delete": "Delete"
+  },
+  "errors": {
+    "AUTH_REQUIRED": "Please log in first.",
+    "AUTH_SESSION_INVALID": "Session expired.",
+    "AUTH_INVALID_CREDENTIALS": "Invalid username or password.",
+    "BAD_REQUEST_INVALID_JSON": "Request body is not valid JSON.",
+    "BAD_REQUEST_VALIDATION": "Request validation failed.",
+    "USER_USERNAME_TAKEN": "Username already exists.",
+    "TODO_NOT_FOUND": "Todo not found.",
+    "INTERNAL_ERROR": "Internal server error.",
+    "UNKNOWN": "Operation failed."
+  }
+}

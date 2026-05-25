@@ -1,9 +1,16 @@
 export type ApiErrorCode =
   | "BAD_REQUEST" // 参数/请求体不合法
+  | "BAD_REQUEST_INVALID_JSON" // 请求体不是合法 JSON
+  | "BAD_REQUEST_VALIDATION" // 参数校验失败
   | "UNAUTHORIZED" // 未登录或登录态失效
+  | "AUTH_REQUIRED" // 需要登录
+  | "AUTH_INVALID_CREDENTIALS" // 用户名或密码错误
+  | "AUTH_SESSION_INVALID" // 登录态失效
   | "FORBIDDEN" // 已登录但无权限
   | "NOT_FOUND" // 资源不存在
+  | "TODO_NOT_FOUND" // Todo 不存在
   | "CONFLICT" // 唯一性冲突（如用户名已存在）
+  | "USER_USERNAME_TAKEN" // 用户名已存在
   | "INTERNAL_ERROR" // 服务端异常（兜底）
 
 export type ApiError = {

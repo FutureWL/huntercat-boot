@@ -11,7 +11,7 @@ function ok<T>(data: T, init?: ResponseInit) {
   return NextResponse.json(body, init)
 }
 
-function fail(status: number, code: "BAD_REQUEST" | "UNAUTHORIZED", message: string) {
+function fail(status: number, code: "BAD_REQUEST_INVALID_JSON" | "BAD_REQUEST_VALIDATION" | "AUTH_INVALID_CREDENTIALS", message: string) {
   const body: ApiResponse<never> = { ok: false, error: { code, message } }
   return NextResponse.json(body, { status })
 }
@@ -22,23 +22,23 @@ export async function POST(request: Request) {
   try {
     payload = (await request.json()) as LoginRequest
   } catch {
-    return fail(400, "BAD_REQUEST", "请求体不是合法 JSON")
+    return fail(400, "BAD_REQUEST_INVALID_JSON", "Request body is not valid JSON.")
   }
 
   if (!payload || typeof payload.username !== "string" || typeof payload.password !== "string") {
-    return fail(400, "BAD_REQUEST", "username/password 必须是字符串")
+    return fail(400, "BAD_REQUEST_VALIDATION", "Invalid username/password.")
   }
 
   const username = payload.username.trim()
   const password = payload.password
 
-  if (!username) return fail(400, "BAD_REQUEST", "username 不能为空")
+  if (!username) return fail(400, "BAD_REQUEST_VALIDATION", "Invalid username/password.")
 
   const user = await getUserWithPasswordByUsername(username)
-  if (!user) return fail(401, "UNAUTHORIZED", "用户名或密码错误")
+  if (!user) return fail(401, "AUTH_INVALID_CREDENTIALS", "Invalid credentials.")
 
   const okPassword = await bcrypt.compare(password, user.passwordHash)
-  if (!okPassword) return fail(401, "UNAUTHORIZED", "用户名或密码错误")
+  if (!okPassword) return fail(401, "AUTH_INVALID_CREDENTIALS", "Invalid credentials.")
 
   const sessionId = await createSession(user.id)
   const res = ok<AuthMeResponse>({ user: { id: user.id, username: user.username } })

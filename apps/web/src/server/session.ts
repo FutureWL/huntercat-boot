@@ -46,6 +46,17 @@ export async function getSessionUserId(request: Request): Promise<string | null>
   return userId ?? null
 }
 
+// 从 cookie header 字符串读取 session，并从 Redis 取回 userId（用于 Server Component 场景）
+export async function getSessionUserIdFromCookieHeader(cookieHeader: string | null): Promise<string | null> {
+  const cookies = parseCookies(cookieHeader)
+  const sessionId = cookies[SESSION_COOKIE_NAME]
+  if (!sessionId) return null
+
+  const redis = await getRedisClient()
+  const userId = await redis.get(keyOf(sessionId))
+  return userId ?? null
+}
+
 // 删除 session（退出登录）
 export async function deleteSession(sessionId: string): Promise<void> {
   const redis = await getRedisClient()
