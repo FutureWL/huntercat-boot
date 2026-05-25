@@ -1,10 +1,11 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@tailwind base; /* Tailwind 基础样式层（Preflight 等） */
+@tailwind components; /* Tailwind 组件层（可用于自定义组件类） */
+@tailwind utilities; /* Tailwind 工具类层（常用 class 都在这里） */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    /* 浅色主题：使用 HSL 变量，供 tailwind.config.ts 里的 colors 引用 */
+    --background: 0 0% 99%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
@@ -27,6 +28,7 @@
   }
 
   .dark {
+    /* 深色主题：与 :root 同名变量，切换时仅替换值 */
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
     --card: 240 10% 3.9%;
@@ -49,10 +51,17 @@
   }
 
   * {
+    /* 全局边框颜色统一走 border 变量，配合 shadcn 风格组件 */
     @apply border-border;
   }
 
   body {
+    /* body 的背景与文字颜色走变量，保证暗色模式生效 */
     @apply bg-background text-foreground;
   }
+}
+
+::selection {
+  /* 选中文本时的高亮色：用主色做淡化处理 */
+  background: hsl(var(--primary) / 0.25);
 }

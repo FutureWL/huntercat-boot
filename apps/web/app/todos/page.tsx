@@ -1,15 +1,14 @@
 "use client"
 
 // Todo 页面（前端 UI）：通过 fetch 调用 /api/v1/todos* 接口，实现 CRUD 的完整闭环
-import type { ApiResponse, AuthMeResponse, AuthUser, CreateTodoRequest, Todo, TodoListResponse, UpdateTodoRequest } from "@pjd/shared"
-import { useRouter } from "next/navigation"
+import type { ApiResponse, AuthMeResponse, AuthUser, CreateTodoRequest, Todo, TodoListResponse, UpdateTodoRequest } from "@pjd/shared" // 共享契约：DTO 与统一响应结构
+import { useRouter } from "next/navigation" // Next.js 客户端路由：用于跳转登录页
 // React Hooks：用于管理页面状态与生命周期
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react" // useEffect：副作用；useMemo：派生状态；useState：本地状态
 
-import { ModeToggle } from "@/components/mode-toggle"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button" // 按钮组件（shadcn 风格）
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card" // 卡片组件（用于承载 Todo 面板）
+import { Input } from "@/components/ui/input" // 输入框组件
 
 // 页面 UI 状态：加载中/正常/错误
 type UiState =
@@ -19,48 +18,48 @@ type UiState =
 
 // 解析后端统一响应结构 ApiResponse<T>
 async function parseJson<T>(res: Response): Promise<ApiResponse<T>> {
-  const json = (await res.json()) as ApiResponse<T>
-  return json
+  const json = (await res.json()) as ApiResponse<T> // 解析 JSON 并断言为统一响应结构
+  return json // 返回解析后的响应体
 }
 
 // 获取 Todo 列表
 async function fetchTodoList(): Promise<TodoListResponse> {
-  const res = await fetch("/api/v1/todos", { method: "GET" })
-  const body = await parseJson<TodoListResponse>(res)
-  if (!body.ok) throw new Error(body.error.message)
-  return body.data
+  const res = await fetch("/api/v1/todos", { method: "GET" }) // 请求 Todo 列表
+  const body = await parseJson<TodoListResponse>(res) // 解析统一响应
+  if (!body.ok) throw new Error(body.error.message) // 失败时抛错，交给上层统一处理
+  return body.data // 返回后端 data
 }
 
 // 创建 Todo
 async function createTodo(title: string): Promise<Todo> {
-  const payload: CreateTodoRequest = { title }
-  const res = await fetch("/api/v1/todos", {
+  const payload: CreateTodoRequest = { title } // 组装创建请求体
+  const res = await fetch("/api/v1/todos", { // 调用创建接口
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(payload),
   })
-  const body = await parseJson<Todo>(res)
-  if (!body.ok) throw new Error(body.error.message)
-  return body.data
+  const body = await parseJson<Todo>(res) // 解析统一响应
+  if (!body.ok) throw new Error(body.error.message) // 失败时抛错
+  return body.data // 返回创建后的 todo
 }
 
 // 局部更新 Todo（PATCH）
 async function patchTodo(id: string, patch: UpdateTodoRequest): Promise<Todo> {
-  const res = await fetch(`/api/v1/todos/${id}`, {
+  const res = await fetch(`/api/v1/todos/${id}`, { // 调用更新接口（PATCH）
     method: "PATCH",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(patch),
   })
-  const body = await parseJson<Todo>(res)
-  if (!body.ok) throw new Error(body.error.message)
-  return body.data
+  const body = await parseJson<Todo>(res) // 解析统一响应
+  if (!body.ok) throw new Error(body.error.message) // 失败时抛错
+  return body.data // 返回更新后的 todo
 }
 
 // 删除 Todo
 async function removeTodo(id: string): Promise<void> {
-  const res = await fetch(`/api/v1/todos/${id}`, { method: "DELETE" })
-  const body = await parseJson<{ id: string }>(res)
-  if (!body.ok) throw new Error(body.error.message)
+  const res = await fetch(`/api/v1/todos/${id}`, { method: "DELETE" }) // 调用删除接口
+  const body = await parseJson<{ id: string }>(res) // 解析统一响应
+  if (!body.ok) throw new Error(body.error.message) // 失败时抛错
 }
 
 export default function TodosPage() {
@@ -93,13 +92,13 @@ export default function TodosPage() {
   }
 
   async function ensureLogin() {
-    const res = await fetch("/api/v1/auth/me", { method: "GET" })
-    const body = await parseJson<AuthMeResponse>(res)
+    const res = await fetch("/api/v1/auth/me", { method: "GET" }) // 查询当前登录用户
+    const body = await parseJson<AuthMeResponse>(res) // 解析统一响应
     if (!body.ok) {
-      router.push("/login")
-      return
+      router.push("/login") // 未登录：跳转到登录页
+      return // 结束流程
     }
-    setUser(body.data.user)
+    setUser(body.data.user) // 写入当前用户信息
   }
 
   // 首次进入页面时加载列表
@@ -108,8 +107,8 @@ export default function TodosPage() {
   }, [])
 
   async function onLogout() {
-    await fetch("/api/v1/auth/logout", { method: "POST" })
-    router.push("/login")
+    await fetch("/api/v1/auth/logout", { method: "POST" }) // 调用退出登录接口（清 cookie + redis session）
+    router.push("/login") // 退出后回到登录页
   }
 
   // 创建按钮/回车触发：创建成功后把新 todo 插到列表头部
@@ -158,15 +157,12 @@ export default function TodosPage() {
             这些数据来自 <code className="rounded bg-muted px-1 py-0.5">/api/v1/todos</code>（MySQL 持久化），并且按登录用户隔离。
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <ModeToggle />
-          <Button variant="outline" type="button" onClick={() => void onLogout()}>
-            退出登录
-          </Button>
-        </div>
+        <Button variant="outline" type="button" onClick={() => void onLogout()}>
+          退出登录
+        </Button>
       </div>
 
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader className="flex-row items-center justify-between space-y-0">
           <CardTitle className="text-lg">
             {user ? `当前用户：${user.username}` : "当前用户：…"}
@@ -199,11 +195,11 @@ export default function TodosPage() {
             <p className="text-sm text-destructive">错误：{ui.message}</p>
           )}
 
-          <div className="divide-y rounded-md border">
+          <div className="divide-y rounded-md border bg-background/60">
             {items.map((todo) => (
               <div key={todo.id} className="flex items-center gap-3 px-3 py-2">
                 <input
-                  className="h-4 w-4 accent-[hsl(var(--primary))]"
+                  className="h-4 w-4 rounded border-input text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   type="checkbox"
                   checked={todo.completed}
                   onChange={() => void onToggle(todo)}
