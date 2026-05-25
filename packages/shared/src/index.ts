@@ -11,4 +11,5 @@ export function makeHello(name: string): HelloResponse {
 }
 
 export * from "./http" // 统一导出：HTTP 通用协议（ApiResponse 等）
+export * from "./auth" // 统一导出：鉴权相关契约（登录/注册/当前用户）
 export * from "./todo" // 统一导出：Todo 资源契约（DTO/类型）

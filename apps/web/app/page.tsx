@@ -16,6 +16,9 @@ export default function HomePage() {
       <p>
         Todo 示例页面：<a href="/todos">/todos</a>
       </p>
+      <p>
+        登录/注册：<a href="/login">/login</a> | <a href="/register">/register</a>
+      </p>
     </main>
   )
 }

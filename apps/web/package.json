@@ -13,11 +13,13 @@
   },
   "dependencies": {
     "@pjd/shared": "workspace:*",
+    "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",
     "mysql2": "^3.22.3",
     "next": "^15.3.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "redis": "^5.12.1"
   },
   "devDependencies": {
     "@types/node": "^22.15.21",

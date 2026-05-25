@@ -1,4 +1,10 @@
-export type ApiErrorCode = "BAD_REQUEST" | "NOT_FOUND" | "INTERNAL_ERROR" // 接口错误码枚举（最小集合，后续可扩展）
+export type ApiErrorCode =
+  | "BAD_REQUEST" // 参数/请求体不合法
+  | "UNAUTHORIZED" // 未登录或登录态失效
+  | "FORBIDDEN" // 已登录但无权限
+  | "NOT_FOUND" // 资源不存在
+  | "CONFLICT" // 唯一性冲突（如用户名已存在）
+  | "INTERNAL_ERROR" // 服务端异常（兜底）
 
 export type ApiError = {
   code: ApiErrorCode // 错误码（机器可读）

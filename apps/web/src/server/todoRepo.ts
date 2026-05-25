@@ -25,20 +25,21 @@ function mapRow(row: TodoRow): Todo {
 }
 
 // 列表：按 id 倒序（新建的在前）
-export async function listTodos(): Promise<Todo[]> {
+export async function listTodos(userId: string): Promise<Todo[]> {
   const pool = getDbPool()
   const [rows] = await pool.query<TodoRow[]>(
-    "SELECT id, title, completed, created_at, updated_at FROM todos ORDER BY id DESC",
+    "SELECT id, title, completed, created_at, updated_at FROM todos WHERE user_id = ? ORDER BY id DESC",
+    [Number(userId)],
   )
   return rows.map(mapRow)
 }
 
 // 详情：按主键查询
-export async function getTodo(id: string): Promise<Todo | undefined> {
+export async function getTodo(userId: string, id: string): Promise<Todo | undefined> {
   const pool = getDbPool()
   const [rows] = await pool.query<TodoRow[]>(
-    "SELECT id, title, completed, created_at, updated_at FROM todos WHERE id = ? LIMIT 1",
-    [Number(id)],
+    "SELECT id, title, completed, created_at, updated_at FROM todos WHERE user_id = ? AND id = ? LIMIT 1",
+    [Number(userId), Number(id)],
   )
 
   const row = rows[0]
@@ -46,20 +47,21 @@ export async function getTodo(id: string): Promise<Todo | undefined> {
 }
 
 // 创建：插入后再读一次，保证返回的数据与数据库一致（包含 created_at/updated_at）
-export async function createTodo(title: string): Promise<Todo> {
+export async function createTodo(userId: string, title: string): Promise<Todo> {
   const pool = getDbPool()
   const [result] = await pool.execute<ResultSetHeader>(
-    "INSERT INTO todos (title, completed) VALUES (?, ?)",
-    [title, 0],
+    "INSERT INTO todos (user_id, title, completed) VALUES (?, ?, ?)",
+    [Number(userId), title, 0],
   )
 
-  const created = await getTodo(String(result.insertId))
+  const created = await getTodo(userId, String(result.insertId))
   if (!created) throw new Error("创建成功但读取失败")
   return created
 }
 
 // 更新：只更新请求里出现的字段（PATCH 语义）
 export async function updateTodo(
+  userId: string,
   id: string,
   patch: Partial<Pick<Todo, "title" | "completed">>,
 ): Promise<Todo | undefined> {
@@ -78,20 +80,24 @@ export async function updateTodo(
     params.push(patch.completed ? 1 : 0)
   }
 
-  if (updates.length === 0) return await getTodo(id)
+  if (updates.length === 0) return await getTodo(userId, id)
 
   params.push(Number(id))
-  await pool.execute(`UPDATE todos SET ${updates.join(", ")} WHERE id = ?`, params)
+  params.push(Number(userId))
+  await pool.execute(
+    `UPDATE todos SET ${updates.join(", ")} WHERE id = ? AND user_id = ?`,
+    params,
+  )
 
-  return await getTodo(id)
+  return await getTodo(userId, id)
 }
 
 // 删除：返回是否真的删到了数据
-export async function deleteTodo(id: string): Promise<boolean> {
+export async function deleteTodo(userId: string, id: string): Promise<boolean> {
   const pool = getDbPool()
   const [result] = await pool.execute<ResultSetHeader>(
-    "DELETE FROM todos WHERE id = ?",
-    [Number(id)],
+    "DELETE FROM todos WHERE user_id = ? AND id = ?",
+    [Number(userId), Number(id)],
   )
   return result.affectedRows > 0
 }

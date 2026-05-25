@@ -1,7 +1,8 @@
 "use client"
 
 // Todo 页面（前端 UI）：通过 fetch 调用 /api/v1/todos* 接口，实现 CRUD 的完整闭环
-import type { ApiResponse, CreateTodoRequest, Todo, TodoListResponse, UpdateTodoRequest } from "@pjd/shared"
+import type { ApiResponse, AuthMeResponse, AuthUser, CreateTodoRequest, Todo, TodoListResponse, UpdateTodoRequest } from "@pjd/shared"
+import { useRouter } from "next/navigation"
 // React Hooks：用于管理页面状态与生命周期
 import { useEffect, useMemo, useState } from "react"
 
@@ -58,9 +59,11 @@ async function removeTodo(id: string): Promise<void> {
 }
 
 export default function TodosPage() {
+  const router = useRouter()
   // 页面状态：ui 表示加载/错误状态；items 表示列表；title 表示输入框内容；submitting 表示创建中
   const [ui, setUi] = useState<UiState>({ status: "idle" })
   const [items, setItems] = useState<Todo[]>([])
+  const [user, setUser] = useState<AuthUser | null>(null)
   const [title, setTitle] = useState("")
   const [submitting, setSubmitting] = useState(false)
 
@@ -78,14 +81,31 @@ export default function TodosPage() {
       setItems(data.items)
       setUi({ status: "idle" })
     } catch (e) {
-      setUi({ status: "error", message: e instanceof Error ? e.message : "加载失败" })
+      const message = e instanceof Error ? e.message : "加载失败"
+      if (message.includes("请先登录")) router.push("/login")
+      setUi({ status: "error", message })
     }
+  }
+
+  async function ensureLogin() {
+    const res = await fetch("/api/v1/auth/me", { method: "GET" })
+    const body = await parseJson<AuthMeResponse>(res)
+    if (!body.ok) {
+      router.push("/login")
+      return
+    }
+    setUser(body.data.user)
   }
 
   // 首次进入页面时加载列表
   useEffect(() => {
-    void refresh()
+    void ensureLogin().then(() => refresh())
   }, [])
+
+  async function onLogout() {
+    await fetch("/api/v1/auth/logout", { method: "POST" })
+    router.push("/login")
+  }
 
   // 创建按钮/回车触发：创建成功后把新 todo 插到列表头部
   async function onCreate() {
@@ -129,8 +149,15 @@ export default function TodosPage() {
       <h1>Todos</h1>
 
       <p style={{ color: "#555" }}>
-        这些数据来自 <code>/api/v1/todos</code>（内存存储），刷新/重启会丢失。
+        这些数据来自 <code>/api/v1/todos</code>（MySQL 持久化），并且按登录用户隔离。
       </p>
+
+      <div style={{ display: "flex", gap: 10, alignItems: "center", marginTop: 8 }}>
+        <span style={{ color: "#555" }}>当前用户：{user ? user.username : "…"}</span>
+        <button type="button" onClick={() => void onLogout()}>
+          退出登录
+        </button>
+      </div>
 
       {/* 创建区：输入标题 + 新增 + 刷新 */}
       <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
