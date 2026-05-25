@@ -1,0 +1,13 @@
+{
+  "name": "pjd-vcn-monorepo",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter @pjd/web dev",
+    "build": "pnpm --filter @pjd/web build",
+    "start": "pnpm --filter @pjd/web start",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}
