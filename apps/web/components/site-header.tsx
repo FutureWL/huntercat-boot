@@ -30,6 +30,7 @@ export function SiteHeader() {
         <nav className="hidden items-center gap-1 sm:flex"> {/* 中间导航：移动端隐藏，sm 以上显示 */}
           {navItems.map((item) => {
             const active = pathname === item.href // 当前路径与导航项相同则视为激活
+            // 注意：Button 开启 asChild 时，children 必须是“唯一的一个 React 元素”，不能夹杂任何文本/注释节点
             return (
               <Button
                 key={item.href}
@@ -37,7 +38,7 @@ export function SiteHeader() {
                 variant="ghost"
                 className={cn(active && "bg-accent text-accent-foreground")} // 激活态：加 accent 背景与文字颜色
               >
-                <Link href={item.href}>{item.label}</Link> // 使用 Link 包裹以实现无刷新跳转
+                <Link href={item.href}>{item.label}</Link>
               </Button>
             )
           })}
