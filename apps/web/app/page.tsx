@@ -6,19 +6,25 @@ export default function HomePage() {
   const { message } = makeHello("Monorepo")
 
   return (
-    <main style={{ padding: 24 }}>
-      <h1>{message}</h1>
-      <p>这个字符串来自 packages/shared，并在 apps/web 中直接复用。</p>
-      <p>
-        {/* 这里是“服务端 API”也复用同一份 shared 逻辑 */}
-        试试访问 <a href="/api/hello?name=TS">/api/hello?name=TS</a>
+    <main className="space-y-4">
+      <h1 className="text-3xl font-bold tracking-tight">{message}</h1>
+      <p className="text-muted-foreground">
+        这个字符串来自 packages/shared，并在 apps/web 中直接复用。
       </p>
-      <p>
-        Todo 示例页面：<a href="/todos">/todos</a>
-      </p>
-      <p>
-        登录/注册：<a href="/login">/login</a> | <a href="/register">/register</a>
-      </p>
+      <div className="flex flex-wrap gap-3">
+        <a className="underline underline-offset-4 hover:text-primary" href="/api/hello?name=TS">
+          /api/hello?name=TS
+        </a>
+        <a className="underline underline-offset-4 hover:text-primary" href="/todos">
+          /todos
+        </a>
+        <a className="underline underline-offset-4 hover:text-primary" href="/login">
+          /login
+        </a>
+        <a className="underline underline-offset-4 hover:text-primary" href="/register">
+          /register
+        </a>
+      </div>
     </main>
   )
 }

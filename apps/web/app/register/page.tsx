@@ -4,6 +4,11 @@ import type { ApiResponse, AuthMeResponse, RegisterRequest } from "@pjd/shared"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+
 async function parseJson<T>(res: Response): Promise<ApiResponse<T>> {
   const json = (await res.json()) as ApiResponse<T>
   return json
@@ -49,45 +54,52 @@ export default function RegisterPage() {
   }
 
   return (
-    <main style={{ padding: 24, maxWidth: 520 }}>
-      <h1>注册</h1>
+    <main className="flex justify-center">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>注册</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="username">用户名</Label>
+            <Input
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="username"
+              autoComplete="username"
+            />
+          </div>
 
-      <div style={{ display: "grid", gap: 10, marginTop: 16 }}>
-        <label style={{ display: "grid", gap: 6 }}>
-          <span>用户名</span>
-          <input
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="username"
-            style={{ padding: "8px 10px" }}
-          />
-        </label>
+          <div className="space-y-2">
+            <Label htmlFor="password">密码（至少 6 位）</Label>
+            <Input
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="password"
+              type="password"
+              autoComplete="new-password"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") void onSubmit()
+              }}
+            />
+          </div>
 
-        <label style={{ display: "grid", gap: 6 }}>
-          <span>密码（至少 6 位）</span>
-          <input
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="password"
-            type="password"
-            style={{ padding: "8px 10px" }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") void onSubmit()
-            }}
-          />
-        </label>
+          <Button className="w-full" type="button" onClick={() => void onSubmit()} disabled={submitting}>
+            注册并登录
+          </Button>
 
-        <button type="button" onClick={() => void onSubmit()} disabled={submitting}>
-          注册并登录
-        </button>
+          {error && <p className="text-sm text-destructive">错误：{error}</p>}
 
-        {error && <p style={{ color: "#b00020" }}>错误：{error}</p>}
-
-        <p style={{ color: "#555" }}>
-          已有账号？<a href="/login">去登录</a>
-        </p>
-      </div>
+          <p className="text-sm text-muted-foreground">
+            已有账号？{" "}
+            <a className="underline underline-offset-4 hover:text-primary" href="/login">
+              去登录
+            </a>
+          </p>
+        </CardContent>
+      </Card>
     </main>
   )
 }
-

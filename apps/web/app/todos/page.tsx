@@ -6,6 +6,11 @@ import { useRouter } from "next/navigation"
 // React Hooks：用于管理页面状态与生命周期
 import { useEffect, useMemo, useState } from "react"
 
+import { ModeToggle } from "@/components/mode-toggle"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+
 // 页面 UI 状态：加载中/正常/错误
 type UiState =
   | { status: "idle" }
@@ -145,92 +150,83 @@ export default function TodosPage() {
   }
 
   return (
-    <main style={{ padding: 24, maxWidth: 720 }}>
-      <h1>Todos</h1>
-
-      <p style={{ color: "#555" }}>
-        这些数据来自 <code>/api/v1/todos</code>（MySQL 持久化），并且按登录用户隔离。
-      </p>
-
-      <div style={{ display: "flex", gap: 10, alignItems: "center", marginTop: 8 }}>
-        <span style={{ color: "#555" }}>当前用户：{user ? user.username : "…"}</span>
-        <button type="button" onClick={() => void onLogout()}>
-          退出登录
-        </button>
+    <main className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Todos</h1>
+          <p className="text-muted-foreground">
+            这些数据来自 <code className="rounded bg-muted px-1 py-0.5">/api/v1/todos</code>（MySQL 持久化），并且按登录用户隔离。
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <ModeToggle />
+          <Button variant="outline" type="button" onClick={() => void onLogout()}>
+            退出登录
+          </Button>
+        </div>
       </div>
 
-      {/* 创建区：输入标题 + 新增 + 刷新 */}
-      <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
-        <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="输入一个 todo 标题"
-          style={{ flex: 1, padding: "8px 10px" }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") void onCreate()
-          }}
-        />
-        <button
-          type="button"
-          onClick={() => void onCreate()}
-          disabled={submitting}
-          style={{ padding: "8px 12px" }}
-        >
-          新增
-        </button>
-        <button
-          type="button"
-          onClick={() => void refresh()}
-          style={{ padding: "8px 12px" }}
-        >
-          刷新
-        </button>
-      </div>
-
-      {/* 加载提示 */}
-      {ui.status === "loading" && <p style={{ marginTop: 12 }}>加载中…</p>}
-
-      {/* 错误提示 */}
-      {ui.status === "error" && (
-        <p style={{ marginTop: 12, color: "#b00020" }}>
-          错误：{ui.message}
-        </p>
-      )}
-
-      <p style={{ marginTop: 12, color: "#555" }}>未完成：{remainingCount}</p>
-
-      {/* 列表区：逐条展示 Todo，并提供勾选/删除 */}
-      <ul style={{ listStyle: "none", padding: 0, marginTop: 12 }}>
-        {items.map((todo) => (
-          <li
-            key={todo.id}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              padding: "10px 8px",
-              borderBottom: "1px solid #eee",
-            }}
-          >
-            <input
-              type="checkbox"
-              checked={todo.completed}
-              onChange={() => void onToggle(todo)}
+      <Card>
+        <CardHeader className="flex-row items-center justify-between space-y-0">
+          <CardTitle className="text-lg">
+            {user ? `当前用户：${user.username}` : "当前用户：…"}
+          </CardTitle>
+          <div className="text-sm text-muted-foreground">未完成：{remainingCount}</div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="输入一个 todo 标题"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") void onCreate()
+              }}
             />
-            <span style={{ flex: 1, textDecoration: todo.completed ? "line-through" : "none" }}>
-              {todo.title}
-            </span>
-            <button type="button" onClick={() => void onDelete(todo)}>
-              删除
-            </button>
-          </li>
-        ))}
-      </ul>
+            <div className="flex gap-2">
+              <Button type="button" onClick={() => void onCreate()} disabled={submitting}>
+                新增
+              </Button>
+              <Button type="button" variant="secondary" onClick={() => void refresh()}>
+                刷新
+              </Button>
+            </div>
+          </div>
 
-      {/* 空态 */}
-      {items.length === 0 && ui.status !== "loading" && (
-        <p style={{ marginTop: 12, color: "#777" }}>暂无 Todo，先新增一个试试。</p>
-      )}
+          {ui.status === "loading" && <p className="text-sm text-muted-foreground">加载中…</p>}
+
+          {ui.status === "error" && (
+            <p className="text-sm text-destructive">错误：{ui.message}</p>
+          )}
+
+          <div className="divide-y rounded-md border">
+            {items.map((todo) => (
+              <div key={todo.id} className="flex items-center gap-3 px-3 py-2">
+                <input
+                  className="h-4 w-4 accent-[hsl(var(--primary))]"
+                  type="checkbox"
+                  checked={todo.completed}
+                  onChange={() => void onToggle(todo)}
+                />
+                <div className="min-w-0 flex-1">
+                  <div className={todo.completed ? "truncate line-through text-muted-foreground" : "truncate"}>
+                    {todo.title}
+                  </div>
+                </div>
+                <Button variant="ghost" type="button" onClick={() => void onDelete(todo)}>
+                  删除
+                </Button>
+              </div>
+            ))}
+
+            {items.length === 0 && ui.status !== "loading" && (
+              <div className="px-3 py-10 text-center text-sm text-muted-foreground">
+                暂无 Todo，先新增一个试试。
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </main>
   )
 }
