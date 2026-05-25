@@ -1,7 +1,9 @@
 import type { ApiResponse, CreateTodoRequest, Todo, TodoListResponse } from "@pjd/shared" // 引入共享契约：响应结构与 DTO
 import { NextResponse } from "next/server" // Next.js 的 Response 帮手（返回 JSON 等）
 
-import { createTodo, listTodos } from "./store" // 引入内存存储的 CRUD 方法
+// 这个路由文件是“协议适配层”：只处理 HTTP 输入输出，不直接写 SQL
+// 真正的数据读写在 src/server/todoRepo.ts（MySQL）
+import { createTodo, listTodos } from "@/src/server/todoRepo" // 引入数据库 Repo（MySQL）
 
 function ok<T>(data: T, init?: ResponseInit) {
   const body: ApiResponse<T> = { ok: true, data } // 统一成功响应体
@@ -16,8 +18,9 @@ function badRequest(message: string) {
   return NextResponse.json(body, { status: 400 }) // 返回 400
 }
 
-export function GET() {
-  const data: TodoListResponse = { items: listTodos() } // 组装列表响应
+export async function GET() {
+  const items = await listTodos() // 从数据库读取列表
+  const data: TodoListResponse = { items } // 组装列表响应
   return ok<TodoListResponse>(data) // 返回列表
 }
 
@@ -39,6 +42,6 @@ export async function POST(request: Request) {
     return badRequest("title 不能为空") // 空字符串不允许
   }
 
-  const created: Todo = createTodo(title) // 创建 Todo
+  const created: Todo = await createTodo(title) // 创建 Todo
   return ok<Todo>(created, { status: 201 }) // 返回 201 Created
 }

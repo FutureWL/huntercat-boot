@@ -7,11 +7,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "db:init": "node ./scripts/init-mysql.mjs",
     "lint": "next lint",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "@pjd/shared": "workspace:*",
+    "dotenv": "^17.4.2",
+    "mysql2": "^3.22.3",
     "next": "^15.3.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"

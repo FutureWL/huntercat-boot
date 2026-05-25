@@ -1,7 +1,9 @@
 import type { ApiResponse, Todo, UpdateTodoRequest } from "@pjd/shared" // 引入共享契约：响应结构与更新 DTO
 import { NextResponse } from "next/server" // Next.js 的 Response 帮手（返回 JSON 等）
 
-import { deleteTodo, getTodo, updateTodo } from "../store" // 引入内存存储的 CRUD 方法（按 id 操作）
+// 这个路由文件处理单条 Todo：GET/PATCH/DELETE
+// 数据库操作全部交给 src/server/todoRepo.ts，避免路由层与存储层强耦合
+import { deleteTodo, getTodo, updateTodo } from "@/src/server/todoRepo" // 引入数据库 Repo（MySQL）
 
 function ok<T>(data: T, init?: ResponseInit) {
   const body: ApiResponse<T> = { ok: true, data } // 统一成功响应体
@@ -18,7 +20,7 @@ export async function GET(
   context: { params: Promise<{ id: string }> }, // Next.js 15 的 route handler：params 是 Promise
 ) {
   const { id } = await context.params // 读取路由参数
-  const todo = getTodo(id) // 读取 Todo
+  const todo = await getTodo(id) // 读取 Todo
   if (!todo) return fail(404, "NOT_FOUND", "Todo 不存在") // 找不到则 404
   return ok<Todo>(todo) // 返回详情
 }
@@ -60,7 +62,7 @@ export async function PATCH(
     if (typeof payload.completed === "boolean") patch.completed = payload.completed // 写入 patch
   }
 
-  const updated = updateTodo(id, patch) // 执行更新
+  const updated = await updateTodo(id, patch) // 执行更新
   if (!updated) return fail(404, "NOT_FOUND", "Todo 不存在") // 找不到则 404
 
   return ok<Todo>(updated) // 返回更新后的实体
@@ -71,7 +73,7 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }, // Next.js 15 的 route handler：params 是 Promise
 ) {
   const { id } = await context.params // 读取路由参数
-  const deleted = deleteTodo(id) // 执行删除
+  const deleted = await deleteTodo(id) // 执行删除
   if (!deleted) return fail(404, "NOT_FOUND", "Todo 不存在") // 找不到则 404
   return ok<{ id: string }>(
     { id }, // 返回被删除的 id
