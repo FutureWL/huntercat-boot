@@ -7,3 +7,11 @@ export class HealthController { // 健康检查控制器：用于探针与连通
     return { ok: true, timestamp: new Date().toISOString() } // 返回结构化 JSON：便于日志与监控采集
   }
 }
+
+@Controller() // 根路径控制器：用于快速验证链路（/v1/pong）
+export class PongController {
+  @Get("pong")
+  getPong() {
+    return { ok: true, message: "pong", timestamp: new Date().toISOString() }
+  }
+}
