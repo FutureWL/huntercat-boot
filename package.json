@@ -5,6 +5,7 @@
     "dev": "pnpm --filter @pjd/web dev",
     "build": "pnpm --filter @pjd/web build",
     "start": "pnpm --filter @pjd/web start",
+    "db:init": "pnpm --filter @pjd/api db:init",
     "dev:api": "pnpm --filter @pjd/api dev",
     "build:api": "pnpm --filter @pjd/api build",
     "start:api": "pnpm --filter @pjd/api start",

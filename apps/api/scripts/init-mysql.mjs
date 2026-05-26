@@ -1,4 +1,4 @@
-import "dotenv/config" // 让脚本能读取 apps/web/.env（本地开发用，不提交 git）
+import "dotenv/config"
 import bcrypt from "bcryptjs"
 import { createConnection } from "mysql2/promise"
 
@@ -15,11 +15,11 @@ async function main() {
   const password = read("MYSQL_PASSWORD")
   const database = read("MYSQL_DATABASE")
 
-  // 先连到 MySQL Server（不指定 database），用于创建数据库与表
   const conn = await createConnection({ host, port, user, password, multipleStatements: true })
 
-  // 创建数据库并切换
-  await conn.query(`CREATE DATABASE IF NOT EXISTS \`${database}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci`)
+  await conn.query(
+    `CREATE DATABASE IF NOT EXISTS \`${database}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci`,
+  )
   await conn.query(`USE \`${database}\``)
 
   await conn.query(`
@@ -34,7 +34,6 @@ async function main() {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
   `)
 
-  // 创建 todos 表（最小字段：id/title/completed/created_at/updated_at）
   await conn.query(`
     CREATE TABLE IF NOT EXISTS todos (
       id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -68,7 +67,9 @@ async function main() {
   if (!hasUserId) {
     await conn.query("ALTER TABLE todos ADD COLUMN user_id BIGINT UNSIGNED NULL")
     await conn.query("ALTER TABLE todos ADD KEY idx_todos_user_id (user_id)")
-    await conn.query("ALTER TABLE todos ADD CONSTRAINT fk_todos_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE")
+    await conn.query(
+      "ALTER TABLE todos ADD CONSTRAINT fk_todos_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE",
+    )
   }
 
   if (demoUserId) {
@@ -79,7 +80,6 @@ async function main() {
   const [rows] = await conn.query("SELECT COUNT(*) AS cnt FROM todos")
   const count = Array.isArray(rows) ? rows[0]?.cnt ?? 0 : 0
 
-  // 表为空时插入种子数据（避免每次执行都重复插入）
   if (Number(count) === 0) {
     await conn.query(
       "INSERT INTO todos (user_id, title, completed) VALUES (?, ?, ?), (?, ?, ?), (?, ?, ?)",
@@ -97,7 +97,6 @@ async function main() {
     )
   }
 
-  // 关闭连接
   await conn.end()
   console.log("MySQL init done.")
 }
@@ -106,3 +105,4 @@ main().catch((e) => {
   console.error(e)
   process.exit(1)
 })
+

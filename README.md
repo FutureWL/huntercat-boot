@@ -13,7 +13,8 @@
 ## 技术栈概览
 
 - Monorepo：pnpm workspaces
-- Web/Server：Next.js（App Router + Route Handlers）
+- Web：Next.js（App Router，页面与交互）
+- API：NestJS（承载登录/注册/会话/Todos 等服务端职责）
 - 共享契约：`packages/shared`（DTO、ApiResponse、错误码等）
 - 数据库：MySQL（持久化 Todo）
 - 会话：Redis（Session 存储，Cookie `sid`）
@@ -23,7 +24,8 @@
 ```text
 .
 ├─ apps/
-│  └─ web/                # Next.js 应用（页面 + API）
+│  ├─ web/                # Next.js 应用（前端）
+│  └─ api/                # NestJS 应用（后端 API）
 ├─ packages/
 │  └─ shared/             # 前后端共享契约（types/DTO/错误码）
 ├─ pnpm-workspace.yaml
@@ -41,7 +43,7 @@ pnpm install
 
 ### 2. 准备环境变量
 
-复制根目录 `.env.example` 的内容到 `apps/web/.env`（该文件已被 `.gitignore` 忽略，不会提交）：
+复制根目录 `.env.example` 的内容到 `apps/api/.env` 与 `apps/web/.env`（这些文件已被 `.gitignore` 忽略，不会提交）：
 
 ```ini
 MYSQL_HOST=127.0.0.1
@@ -67,7 +69,7 @@ SESSION_TTL_SECONDS=604800
 ### 4. 初始化数据库结构与种子数据
 
 ```bash
-pnpm --filter @pjd/web db:init
+pnpm --filter @pjd/api db:init
 ```
 
 该脚本会：
@@ -79,8 +81,11 @@ pnpm --filter @pjd/web db:init
 ### 5. 启动开发服务器
 
 ```bash
+pnpm --filter @pjd/api dev
 pnpm --filter @pjd/web dev --port 3000
 ```
+
+Web 会将 `/api/v1/*` 通过 Next.js rewrites 反向代理到 API（默认 `http://localhost:3001/v1/*`）。如需自定义 API 地址，可设置环境变量 `API_INTERNAL_BASE_URL`。
 
 打开：
 
@@ -117,14 +122,16 @@ pnpm --filter @pjd/web dev --port 3000
 pnpm -r typecheck
 
 # 初始化数据库
-pnpm --filter @pjd/web db:init
+pnpm --filter @pjd/api db:init
 
 # 启动 Web（Next.js）
 pnpm --filter @pjd/web dev --port 3000
+
+# 启动 API（NestJS）
+pnpm --filter @pjd/api dev
 ```
 
 ## 备注
 
 - `apps/web/.env` 属于本地环境配置，不应提交到仓库
 - 本仓库当前提供的是可学习、可扩展的基础工程能力，后续业务可在此基础上扩展：权限、角色、审计日志、分页/搜索、业务领域模块化等
-
