@@ -10,12 +10,13 @@ type ProvidersProps = {
   children: ReactNode // 子树内容：页面与组件
   locale: string // 当前语言：来自服务端请求配置
   messages: AbstractIntlMessages // 当前语言的消息字典：供 next-intl 查找文案
+  timeZone: string
 }
 
-export function Providers({ children, locale, messages }: ProvidersProps) {
+export function Providers({ children, locale, messages, timeZone }: ProvidersProps) {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange> {/* 主题上下文：通过 class="dark" 切换并避免切换动画闪烁 */}
-      <NextIntlClientProvider locale={locale} messages={messages}> {/* 国际化上下文：向子组件提供 locale 与 messages */}
+      <NextIntlClientProvider locale={locale} messages={messages} timeZone={timeZone}> {/* 国际化上下文：向子组件提供 locale 与 messages */}
         {children}
       </NextIntlClientProvider>
     </ThemeProvider>

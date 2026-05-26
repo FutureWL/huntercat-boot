@@ -40,5 +40,6 @@ export default getRequestConfig(async ({ requestLocale }: { requestLocale: Promi
   return {
     locale: safeLocale, // 告诉 next-intl 当前请求使用的语言
     messages: (await import(`../messages/${safeLocale}.json`)).default, // 动态导入语言包：仅加载当前语言，减少 bundle 体积
+    timeZone: "Asia/Shanghai",
   }
 })
