@@ -10,3 +10,4 @@ apps/web/node_modules/
 cookies*.txt
 apps/api/node_modules/
 apps/api/dist/
+**/next-env.d.ts
